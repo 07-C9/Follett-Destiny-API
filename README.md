@@ -68,13 +68,13 @@ Put input CSVs in `./input/` and the scripts will write output to `./output/`. B
 
 **Field IDs are not universal.** The numeric IDs for item fields (Serial Number, Barcode, Condition, etc.) vary by district/instance. You need to hit the `/materials/resourcetypes/{id}` endpoint to discover yours. The `prepare_payloads.py` script has the ones from our setup as defaults but yours will almost certainly be different.
 
-**PUT requests need the full payload.** The API docs sort of mention this but it's easy to miss. If you PUT an update to an item and only include the field you're changing, it can blank out everything else. Always GET the full item first, modify what you need, then PUT the whole thing back. The `mass_update.py` script handles this.
+**PUT requests need the full payload.** If you PUT an update to an item and only include the field you're changing, it will blank out everything else. Always GET the full item first, modify what you need, then PUT the whole thing back. The `mass_update.py` script handles this.
 
-**There's no "list all patrons" endpoint.** Seriously. You can look up a patron by ID, barcode, or districtId, but you can't just get a list. The `fetch_patrons_async.py` script works around this by scanning a range of internal IDs. It's slow but it works.
+**There's no "list all patrons" endpoint.** You can look up a patron by ID, barcode, or districtId, but there's no way to just get a list. The `fetch_patrons_async.py` script works around this by scanning a range of internal IDs. It's slow but it works.
 
 **Pagination uses OData.** The API uses `$top`, `$skip`, and `$orderby` parameters. The `@nextLink` field in the response gives you the next page URL, but you need to prepend your base URL to it. Check `reference_pipeline.py` for how the pagination loop works.
 
-**The auth token expires.** Tokens last about an hour (3600 seconds). If you're doing a long-running operation, you might need to refresh it mid-run. The scripts in this repo don't handle token refresh, so keep that in mind for really large batches.
+**Token lifetime is 3600 seconds.** These scripts don't handle token refresh, so if you're running a large batch that takes over an hour, you'll need to account for that.
 
 **Rate limiting exists but isn't documented.** I put short delays between requests (0.1 to 0.5 seconds) and didn't have problems. The async patron fetcher caps concurrent requests at 10. Your mileage may vary.
 
