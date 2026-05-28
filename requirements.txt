@@ -1,0 +1,5 @@
+requests
+python-dotenv
+aiohttp
+tqdm
+pandas
